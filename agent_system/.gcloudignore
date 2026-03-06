@@ -1,0 +1,8 @@
+.git
+.gitignore
+venv/
+__pycache__/
+*.pyc
+.env
+cloud-sql-proxy
+terraform_1.7.5_darwin_arm64.zip

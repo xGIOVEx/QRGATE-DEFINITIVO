@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F0E0C" />
+    <meta name="description"
+        content="QRGate: biglietteria QR per musei, chiese e siti culturali europei. Attivo in 24 ore, zero hardware, 20+ lingue, audioguide AI. Pay-as-you-go: €0,49 + 5% solo sul venduto." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="QRGate" />
+    <meta property="og:image" content="https://qrgate.io/og-image.jpg" />
+    <meta property="og:title" content="QRGate — Biglietteria Digitale per il Patrimonio Culturale" />
+    <meta property="og:description" content="Attivo in 24 ore. Zero hardware. 20+ lingue. Pay-as-you-go." />
+    <meta property="og:url" content="https://qrgate.io" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap"
+        rel="stylesheet" />
+    <!--
+        manifest.json provides metadata used when your web app is installed on a
+        user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+        -->
+    <!--
+        Notice the use of %PUBLIC_URL% in the tags above.
+        It will be replaced with the URL of the `public` folder during the build.
+        Only files inside the `public` folder can be referenced from the HTML.
+
+        Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+        work correctly both with client-side routing and a non-root public URL.
+        Learn how to configure a non-root public URL by running `npm run build`.
+        -->
+    <title>QRGate — Biglietteria Digitale per Musei e Patrimonio Culturale</title>
+
+    <!-- SEO: Hreflang for European Markets -->
+    <link rel="alternate" hreflang="it" href="https://qrgate.io/it/home" />
+    <link rel="alternate" hreflang="fr" href="https://qrgate.io/fr/home" />
+    <link rel="alternate" hreflang="es" href="https://qrgate.io/es/home" />
+    <link rel="alternate" hreflang="de" href="https://qrgate.io/de/home" />
+    <link rel="alternate" hreflang="nl" href="https://qrgate.io/nl/home" />
+    <link rel="alternate" hreflang="pt" href="https://qrgate.io/pt/home" />
+    <link rel="alternate" hreflang="x-default" href="https://qrgate.io/" />
+
+    <!-- SEO: JSON-LD Structured Data -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "QRGate",
+          "operatingSystem": "Web",
+          "applicationCategory": "BusinessApplication",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "1240"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+          }
+        }
+        </script>
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "QRGate",
+          "url": "https://qrgate.io",
+          "logo": "https://qrgate.io/logo.png",
+          "sameAs": [
+            "https://linkedin.com/company/qrgate"
+          ]
+        }
+        </script>
+
+    <script>window.addEventListener("error", function (e) { if (e.error instanceof DOMException && e.error.name === "DataCloneError" && e.message && e.message.includes("PerformanceServerTiming")) { e.stopImmediatePropagation(); e.preventDefault() } }, true);</script>
+</head>
+
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+</body>
+
+</html>

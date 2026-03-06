@@ -1,0 +1,127 @@
+/* ═══════════════════════════════════════════════════════════════
+   QRGate — Design System v3.0 — European Cultural Premium
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Custom Fonts ─────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap');
+
+/* ── Design Tokens ────────────────────────────────────────────── */
+:root {
+    /* Brand */
+    --color-bg: #F6F3EE;
+    --color-bg-white: #FFFFFF;
+    --color-ink: #0F0F0F;
+    --color-ink-muted: #6B6B6B;
+    --color-border: #E8E4DC;
+    --color-accent: #D4A853;
+    --color-accent-bg: #FBF6EC;
+
+    /* Radii */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+
+    /* Shadows */
+    --shadow-card: 0 1px 3px rgba(15, 15, 15, 0.06), 0 4px 12px rgba(15, 15, 15, 0.05);
+    --shadow-lifted: 0 4px 24px rgba(15, 15, 15, 0.10);
+}
+
+/* ── Base ─────────────────────────────────────────────────────── */
+html {
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    letter-spacing: -0.02em;
+    font-optical-sizing: auto;
+}
+
+h1 {
+    letter-spacing: -0.03em;
+}
+
+/* ── Marquee Animation ────────────────────────────────────────── */
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes marquee2 {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 22s linear infinite;
+}
+
+.animate-marquee2 {
+    animation: marquee2 22s linear infinite;
+}
+
+/* ── Tabular Numbers ──────────────────────────────────────────── */
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+}
+
+/* ── Reduced Motion ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #D0CCC4;
+    border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #A8A39A;
+}
+
+/* ── Tailwind directives (mantieni quelli esistenti sotto) ── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

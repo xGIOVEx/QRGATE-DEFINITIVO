@@ -1,0 +1,110 @@
+main:
+  params: [args]
+  steps:
+    - init_run:
+        assign:
+          - payload: ${args.message.data} # Assuming triggered by Pub/Sub
+          - event_data: ${json.decode(base64.decode(payload))}
+          - agent_id: ${event_data.agent_id}
+          - event_type: ${event_data.event_type}
+          - run_id: ${"run-" + string(uuid.generate())}
+          - api_url: ${sys.get_env("TOOL_GATEWAY_URL")} # Injected at deploy time
+
+    - register_run:
+        call: http.post
+        args:
+          url: ${api_url + "/api/v1/run/start"}
+          auth:
+            type: OIDC
+          body:
+            run_id: ${run_id}
+            agent_id: ${agent_id}
+            event_data: ${event_data}
+        result: run_registration
+
+    - call_gemini_planner:
+        call: http.post
+        args:
+          url: ${api_url + "/api/v1/run/plan"}
+          auth:
+            type: OIDC
+          body:
+            run_id: ${run_id}
+            agent_id: ${agent_id}
+        result: plan_result
+
+    - check_plan_status:
+        switch:
+          - condition: ${plan_result.body.status == "requires_hitl"}
+            next: trigger_hitl
+          - condition: ${plan_result.body.status == "failed"}
+            next: fail_run
+          - condition: ${plan_result.body.status == "complete"}
+            next: close_run
+        next: execute_plan_steps
+
+    - execute_plan_steps:
+        for:
+          value: step
+          in: ${plan_result.body.steps}
+          steps:
+            - execute_tool:
+                try:
+                  call: http.post
+                  args:
+                    url: ${api_url + "/api/v1/tool/execute"}
+                    auth:
+                      type: OIDC
+                    body:
+                      run_id: ${run_id}
+                      agent_id: ${agent_id}
+                      tool: ${step.tool}
+                      args: ${step.args}
+                      idempotency_key: ${step.idempotency_key}
+                  result: tool_result
+                except:
+                  as: e
+                  steps:
+                    - log_error:
+                        call: sys.log
+                        args:
+                          text: ${"Tool execution failed " + json.encode_to_string(e)}
+                          severity: ERROR
+                    - check_retry:
+                        # Assuming the tool gateway handles DB and DLQ logging internally, workflow just fails this step
+                        next: continue_loop
+            - continue_loop:
+                assign:
+                  - dummy: 1
+
+    # After tools are executed, loop back to planning for the next iteration
+    - evaluate_next_iteration:
+        next: call_gemini_planner
+
+    - trigger_hitl:
+        call: sys.log
+        args:
+          text: ${"HITL required for run " + run_id}
+          severity: INFO
+        next: end
+
+    - fail_run:
+        call: http.post
+        args:
+          url: ${api_url + "/api/v1/run/fail"}
+          auth:
+            type: OIDC
+          body:
+            run_id: ${run_id}
+            reason: "Planning failed"
+        next: end
+
+    - close_run:
+        call: http.post
+        args:
+          url: ${api_url + "/api/v1/run/complete"}
+          auth:
+            type: OIDC
+          body:
+            run_id: ${run_id}
+        next: end

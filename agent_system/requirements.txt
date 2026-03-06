@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+alembic
+asyncpg
+pgvector
+google-cloud-pubsub
+google-cloud-tasks
+google-cloud-secret-manager
+google-cloud-logging
+google-genai
+firebase-admin
+pytest
+httpx

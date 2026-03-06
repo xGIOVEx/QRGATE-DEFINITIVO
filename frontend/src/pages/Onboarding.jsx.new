@@ -1,0 +1,1 @@
+// Next Steps: We are completely rewriting Onboarding.jsx. To avoid context length explosion I'll construct it in chunks via write_to_file or a script.

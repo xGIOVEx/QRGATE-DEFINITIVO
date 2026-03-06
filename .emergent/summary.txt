@@ -1,0 +1,170 @@
+<analysis>**original_problem_statement:**
+L'utente vuole costruire un'applicazione web completa chiamata QRGate, un sistema plug-and-play di biglietteria QR e gestione degli ingressi per musei, chiese e attrazioni turistiche. L'obiettivo è creare un prodotto SaaS completamente funzionale paragonabile a TicketTailor o TicketOne, specializzato per il settore del patrimonio culturale.
+
+**PRODUCT REQUIREMENTS:**
+L'utente ha richiesto un'implementazione massiva di 9 feature principali per rendere l'applicazione production-ready.
+1.  **Biglietti a Fascia Oraria (Timed Entry):** I luoghi devono poter vendere biglietti per fasce orarie specifiche per gestire il flusso di visitatori. Include modifiche a backend, dashboard, checkout e scanner.
+2.  **Analisi Avanzate:** Migliorare il pannello di reportistica del luogo e il pannello super admin con grafici di andamento, performance dei biglietti, analisi dei visitatori, dati geografici (mappe) e opzioni di esportazione PDF/Excel.
+3.  **Capacità e Lista d'Attesa (Waitlist):** Implementare una capacità giornaliera massima e un sistema di lista d'attesa automatico che notifica i visitatori via email quando si liberano posti.
+4.  **Pannello Super Admin Completo:** Costruire un pannello di amministrazione completo per la gestione della piattaforma, con dashboard (KPI), gestione luoghi, visualizzazione del fatturato, transazioni, analisi e impostazioni globali (es. commissioni).
+5.  **Sistema Email Reale (Resend):** Implementare l'invio reale di email (biglietti per i visitatori, notifiche di vendita per i gestori, email di benvenuto e notifiche per la lista d'attesa) utilizzando Resend, con template HTML.
+6.  **Generazione Poster PDF:** Implementare la generazione on-demand di poster PDF (formato A4, A6, etc.) con il QR code del luogo, pronti per essere stampati ed esposti.
+7.  **Esportazione CSV e PDF Report:** Migliorare l'esportazione CSV degli ordini e aggiungere una nuova funzionalità per esportare un report di riepilogo in PDF con grafici e dati chiave.
+8.  **Correzioni UX Critiche:** Risolvere una serie di problemi di usabilità, tra cui: aggiungere scheletri di caricamento, creare una pagina 404 personalizzata, migliorare la navigazione mobile, mantenere lo schermo attivo sullo scanner e aggiornare dinamicamente i totali nel checkout.
+9.  **Sicurezza (Hardening):** Aggiungere rate limiting agli endpoint critici, sanificare gli input, migliorare la sicurezza dei token QR e verificare la configurazione CORS.
+
+**User's preferred language**:
+Italiano. Il prossimo agente DEVE rispondere in italiano.
+
+**what currently exists?**
+Un'applicazione SaaS full-stack (React/FastAPI/MongoDB) quasi completa e pronta per il lancio. Sono state implementate quasi tutte le feature richieste nel product requirement. L'app include:
+- **Backend Modulare:** Architettura basata su router FastAPI, con logica separata per autenticazione, dashboard, admin, API pubbliche, scanner e webhook.
+- **Integrazioni Funzionanti:** Stripe per i pagamenti (con Checkout Sessions), Resend per le email transazionali.
+- **Feature Principali Implementate:**
+    - Autenticazione JWT (staff, admin, superadmin).
+    - Onboarding guidato per nuovi luoghi.
+    - Dashboard per i luoghi per gestire biglietti, ordini, staff, codici promozionali, upload di loghi/cover, abbonamenti stagionali e impostazioni.
+    - **Biglietti a Fascia Oraria (Timed Entry):** Sistema completo per la creazione di biglietti con slot, selezione in fase di checkout e validazione allo scanner.
+    - **Gestione Capacità e Liste d'Attesa (Waitlist).**
+    - **Scanner PWA Offline:** Lo scanner di QR code funziona anche senza connessione internet, sincronizzando i dati quando torna online.
+    - **Analisi Avanzate:** Dashboard per i luoghi con grafici (trend fatturato, canali, performance biglietti) e una mappa geografica dei visitatori.
+    - **Pannello Super Admin:** Funzionalità complete per la gestione della piattaforma.
+    - **Localizzazione:** Supporto completo per Italiano (IT), Inglese (EN) e Spagnolo (ES).
+
+**Last working item**:
+    - Last item agent was working: L'utente ha chiesto di chiamare il  e l'  per verificare la prontezza dell'applicazione al deployment, dopo che l'agente ha completato l'implementazione di un vasto set di funzionalità. L'agente stava per eseguire questa richiesta.
+    - Status: NOT STARTED
+    - Agent Testing Done: N/A
+    - Which testing method agent to use?  e  come richiesto dall'utente.
+    - User Testing Done: N
+
+**All Pending/In progress Issue list**:
+  - Issue 1: Eseguire il controllo di deployment e salute (P0)
+  
+  Issues Detail:
+  - Issue 1: 
+     - Attempted fixes: Nessuno. È la prossima azione richiesta dall'utente.
+     - Next debug checklist:
+       1. Eseguire il tool .
+       2. Eseguire il tool .
+       3. Analizzare l'output di entrambi gli agenti per identificare eventuali problemi rimanenti prima del deployment.
+       4. Comunicare i risultati all'utente.
+     - Why fix this issue and what will be achieved with the fix? Per soddisfare la richiesta esplicita dell'utente e preparare l'applicazione per il rilascio in produzione.
+     - Status:  NOT STARTED
+     - Is recurring issue? N
+     - Should Test frontend/backend/both after fix? Both (tramite gli agenti specifici).
+     - Blocked on other issue: None.
+
+**In progress Task List**:
+- None. La fase di implementazione principale è conclusa.
+
+**Upcoming and Future Tasks**
+  Upcoming Tasks:
+  - **P2: Onboarding Stripe Live Keys (P1):** Guidare l'utente nel processo di sostituzione delle chiavi di test di Stripe con quelle di produzione.
+  - **P2: Apple/Google Wallet Integration (P2):** Aggiungere la possibilità per i visitatori di salvare i loro biglietti QR nei wallet dei loro smartphone.
+  
+  Future Tasks:
+  - **P3: App Mobile Nativa (React Native):** Sviluppare un'app mobile dedicata per lo scanner e potenzialmente per la gestione della dashboard.
+  - **P4: Parità Funzionalità Competitor:** Ricercare e implementare altre funzionalità chiave dei competitor (es. campi personalizzati sui biglietti, integrazioni con altri servizi).
+  - **P5: Strumenti di Marketing & Crescita:** Aggiungere funzionalità come l'affiliate tracking, integrazioni con mailing list e strumenti di condivisione social.
+
+**Completed work in this session**
+- **Traduzione Spagnola (ES):** Aggiunto il supporto completo per la lingua spagnola (file di traduzione, selettore lingua).
+- **Fix Bug Donazioni:** Corretto un bug per cui i valori delle donazioni venivano mostrati in centesimi (€0.02) invece che in euro (€2) a causa di dati errati nel seed del database.
+- **Scanner PWA con Supporto Offline:** Implementato un Service Worker avanzato con IndexedDB e background sync per permettere la scansione dei biglietti anche senza connessione internet.
+- **Implementazione Massiva di Feature (P1):**
+    - **Biglietti a Fascia Oraria:** Implementazione completa backend e frontend.
+    - **Capacità e Liste d'Attesa:** Sistema backend e UI della dashboard per la gestione.
+    - **Pannello Admin Avanzato:** Costruite le sezioni mancanti del pannello super admin.
+    - **Sistema Email Reale:** Implementato l'invio di 4 tipi di email transazionali tramite Resend.
+    - **Generazione PDF Poster:** Creato l'endpoint e la logica per generare poster PDF.
+    - **Esportazione Report:** Implementata l'esportazione di report in PDF e CSV.
+    - **Fix UX:** Implementati numerosi miglioramenti all'interfaccia utente (wake lock, pagina 404, scheletri di caricamento, etc.).
+    - **Sicurezza:** Aggiunto rate limiting agli endpoint principali.
+- **Implementazione Feature (P2):**
+    - **Analisi Avanzate:** Creata una nuova pagina di reportistica per i luoghi con grafici, KPI e una mappa geografica.
+    - **Abbonamenti Stagionali (Season Pass):** Aggiunta la funzionalità completa (backend e frontend) per creare e gestire abbonamenti.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+- **Frontend:** React, , , , , Tailwind CSS, , , , , , IndexedDB, Service Workers.
+- **Backend:** FastAPI, Pydantic, MongoDB (), JWT, , , , , , , .
+- **Architettura:** Backend modulare (FastAPI routers), service layer, PWA con funzionalità offline.
+
+**key DB schema**
+- **tickets:** Aggiunti , , .
+- **slot_bookings (nuova):** , , , , , .
+- **waitlist (nuova):** , , , , , .
+- **season_passes (nuova):** , , , , .
+- **holders (nuova):** , , , , , .
+
+**changes in tech stack**
+- Nessuna modifica allo stack principale. Aggiunte librerie per grafici (, ), mappe () e generazione PDF ().
+
+**All files of reference**
+- **Backend:** , , , , , , .
+- **Frontend:** , , .
+- **Nuove Pagine/Componenti:**  (aggiornato),  (aggiornato), , , , , .
+- **Traduzioni:** , , .
+
+**key api endpoints**
+- : (GET) Restituisce gli slot disponibili per un biglietto a fascia oraria.
+- : (POST) Aggiunge un utente alla lista d'attesa.
+- : (GET) Fornisce dati aggregati per la nuova dashboard di reportistica.
+- : (CRUD) Gestione degli abbonamenti stagionali.
+- : (GET) Fornisce dati aggregati a livello di piattaforma per il super admin.
+- : (POST) Genera il poster PDF del locale.
+
+**Critical Info for New Agent**
+- **Azione Immediata:** L'ultima richiesta dell'utente è stata di eseguire un controllo di prontezza al deployment. Il prossimo agente deve immediatamente chiamare  e  e riportare i risultati.
+- **Feature Complete:** L'applicazione è considerata completa per quanto riguarda le feature P1 e P2. Il lavoro principale di implementazione è terminato.
+- **Test:** L'agente di test è stato utilizzato ampiamente e con successo per convalidare tutte le nuove principali funzionalità.
+
+**documents and test reports created in this job**
+- 
+- 
+- 
+- 
+-  (aggiornato significativamente)
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **User:** (Fornisce una richiesta massiva con 9 feature dettagliate, da P1 a P2, per rendere QRGate production-ready).
+2.  **Agent:** (Conferma la comprensione e inizia a pianificare l'implementazione).
+3.  **Agent:** (Inizia a implementare le feature P1: Timed Entry, Waitlist, etc., modificando backend e frontend).
+4.  **Agent:** (Esegue il  aggiornato e testa con successo le nuove API e la UI per i biglietti a fascia oraria).
+5.  **Agent:** (Esegue il  che conferma il successo al 100% dell'implementazione delle feature P1).
+6.  **User:**  (Chiede di procedere con l'implementazione del resto delle feature senza ulteriori conferme).
+7.  **Agent:** (Procede con l'implementazione delle feature P2: Analytics avanzate, Abbonamenti Stagionali e fix UX).
+8.  **Agent:** (Mostra screenshot della nuova dashboard Analytics e della pagina Abbonamenti, confermando che funzionano).
+9.  **User:**  (Chiede se il lavoro è completato).
+10. **User:**  (Richiesta finale e azione pendente).
+
+**Project Health Check:**
+- **Broken:** Nessuno noto. L'app è stata ampiamente testata.
+- **Mocked:** Nessuno. Le integrazioni con Stripe e Resend sono state configurate per utilizzare chiavi reali (di test) e il sistema email è funzionante.
+
+**3rd Party Integrations**
+- **OpenAI GPT-4o:** Per il chatbot (implementazione precedente).
+- **Stripe:** Per pagamenti e onboarding (chiavi di test).
+- **Resend:** Per l'invio di email transazionali (chiave di test).
+- **reportlab, qrcode, Pillow:** Per la generazione di PDF e QR code nel backend.
+- **slowapi:** Per il rate limiting degli endpoint.
+- **jsQR:** Per la scansione QR nel frontend.
+- **chart.js, react-chartjs-2:** Per i grafici nelle dashboard.
+- **react-simple-maps:** Per la mappa geografica nella dashboard analytics.
+
+**Testing status**
+- Testing agent used after significant changes: YES. L'agente di test è stato usato più volte con successo per validare le principali milestone di implementazione.
+- Troubleshoot agent used after agent stuck in loop: NO.
+- Test files created: []
+- Known regressions: None.
+
+**Credentials to test flow:**
+- **Super Admin:**  / 
+- **Demo Venue Admin:**  / 
+- **Demo Staff:**  / 
+
+**What agent forgot to execute**
+- L'agente non ha ancora eseguito la richiesta finale e più importante dell'utente: chiamare  e . Questa è la priorità assoluta per il prossimo agente.</analysis>

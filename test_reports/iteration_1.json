@@ -1,0 +1,96 @@
+{
+  "summary": "Comprehensive testing of QRGate app - backend (35/35 tests passed), frontend flows, and integration. Fixed critical VenueLanding.jsx API bug. Identified 3 other bugs needing main agent fixes.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "GET /api/dashboard/stats",
+        "issue": "Validation rate calculation bug: `all_scans` queries ALL scans across all venues (no venue_id filter), while `all_orders` filters by venue. Causes validation rate >100% (shows 207%). Fix: filter scans by checking if scan.order_id is in the venue's order IDs.",
+        "priority": "MEDIUM"
+      },
+      {
+        "endpoint": "PUT /api/dashboard/settings",
+        "issue": "Onboarding wizard sends `stripe_onboarded: true` to this endpoint, but `stripe_onboarded` is NOT in VenueSettingsUpdate model, so it's silently ignored. New venues via onboarding never get stripe_onboarded=True saved in DB, causing checkout to fail. Fix: add `stripe_onboarded: Optional[bool] = None` to VenueSettingsUpdate model.",
+        "priority": "HIGH"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "DashboardOrders",
+        "issue": "DashboardOrders component (orders with refund buttons) is imported in Dashboard.jsx but never added to any Route. The orders management page is completely unreachable. Add `<Route path='/orders' element={<DashboardOrders />} />` and a sidebar menu item for orders in Dashboard.jsx",
+        "selector": "N/A - no route exists",
+        "priority": "HIGH"
+      },
+      {
+        "component": "DashboardPayments",
+        "issue": "Demo venue seeded with stripe_onboarded=True but stripe_account_id=None. Stripe status API returns 'not_connected' (because it checks account_id first), showing 'Non collegato' in UI even though checkouts work. Minor discrepancy - low impact.",
+        "selector": "[data-testid='dashboard-payments']",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Dashboard Reports page",
+        "issues": ["Validation rate shows >100% (207%) due to backend bug - visually misleading for venue admins"]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_qrgate.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "HIGH: Add `<Route path='/orders' element={<DashboardOrders />} />` in Dashboard.jsx and a sidebar menu item to navigate to it (DashboardOrders with refund buttons is orphaned)",
+    "HIGH: Add `stripe_onboarded: Optional[bool] = None` to VenueSettingsUpdate model in server.py so onboarding wizard can properly save stripe_onboarded=True",
+    "MEDIUM: Fix validation rate calculation in /api/dashboard/stats: filter scans to only count those belonging to the current venue's orders (line ~632 in server.py: `scanned_order_ids = set(s['order_id'] for s in all_scans if s['order_id'] in set(o['id'] for o in all_orders))`)",
+    "LOW: Seed data should set stripe_account_id for venues with stripe_onboarded=True, or the Payments dashboard should handle the case where stripe_onboarded=True but stripe_account_id=None"
+  ],
+  "critical_code_review_comments": [
+    "DashboardOrders is imported but not routed in Dashboard.jsx - the entire orders management page (refund functionality) is inaccessible to venue admins",
+    "VenueSettingsUpdate model missing stripe_onboarded field - onboarding wizard silently fails to set stripe_onboarded for new venues",
+    "Validation rate in dashboard stats is computed using scans from all venues (missing venue_id filter), making it meaningless/wrong",
+    "VenueLanding.jsx had wrong API endpoints (FIXED: /api/venues/${slug} → /api/public/venue/${slug})"
+  ],
+  "updated_files": [
+    "/app/frontend/src/pages/VenueLanding.jsx"
+  ],
+  "success_rate": {
+    "backend": "100% (35/35 tests passed)",
+    "frontend": "85% - all pages load and main flows work; DashboardOrders unreachable, validation rate wrong, onboarding stripe_onboarded silent fail"
+  },
+  "test_credentials": {
+    "demo_admin": "demo@qrgate.com / Demo1234!",
+    "superadmin": "admin@qrgate.com / Admin1234!",
+    "staff": "staff@qrgate.com / Staff1234!"
+  },
+  "seed_data_creation": "Ran seed_data.py - created 4 venues (Museo Civico Brescia, Duomo Milano, Gallerie Uffizi, Colosseo), ~100 orders, scans, staff members",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend 100% passing. Critical VenueLanding.jsx bug was fixed (wrong API endpoints). Key remaining bugs: 1) DashboardOrders not routed (no /dashboard/orders route + no sidebar link), 2) stripe_onboarded not saved in onboarding flow (VenueSettingsUpdate missing field), 3) Validation rate >100% due to all-venues scans query. Public venue pages, checkout, success with QR, admin panel, reports CSV, poster PDF all working. Scanner works (camera not available in test env).",
+  "rca_of_issues": {
+    "VenueLanding_wrong_endpoints": {
+      "bug": "VenueLanding.jsx called GET /api/venues/${slug} and GET /api/venues/${id}/tickets which don't exist in the backend",
+      "root_cause": "Page was written referencing non-existent API endpoints instead of the correct /api/public/venue/${slug} which returns both venue and tickets",
+      "fix_applied": "Changed to use GET /api/public/venue/${slug} which returns {venue, tickets} in a single response",
+      "file": "/app/frontend/src/pages/VenueLanding.jsx"
+    },
+    "DashboardOrders_not_routed": {
+      "bug": "DashboardOrders component (with orders table, refund buttons, CSV export) is imported in Dashboard.jsx but no Route element uses it",
+      "root_cause": "Route was never added when DashboardOrders was implemented",
+      "fix_needed": "In Dashboard.jsx, add <Route path='/orders' element={<DashboardOrders />} /> inside Routes, add sidebar menu item"
+    },
+    "validation_rate_cross_venue": {
+      "bug": "Validation rate shows >100% (207%) for demo venue",
+      "root_cause": "In get_dashboard_stats, `all_scans = await db.scans.find({}, ...)` fetches ALL scans from all venues with no venue filter. This inflates scanned_order_ids count vs venue-specific all_orders",
+      "fix_needed": "Filter scans to only include scans where order_id is in the set of venue's order IDs"
+    },
+    "onboarding_stripe_onboarded_not_saved": {
+      "bug": "New venues created through onboarding will have stripe_onboarded=False, causing checkout to fail with 'Biglietteria non ancora attiva'",
+      "root_cause": "Onboarding wizard sends stripe_onboarded:true to PUT /api/dashboard/settings, but VenueSettingsUpdate model doesn't include stripe_onboarded field so it's silently dropped by Pydantic",
+      "fix_needed": "Add `stripe_onboarded: Optional[bool] = None` to VenueSettingsUpdate model in server.py"
+    }
+  }
+}

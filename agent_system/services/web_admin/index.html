@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRGate Admin | AI Approvals</title>
+    <!-- Tailwind CSS for functional, minimal design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="max-w-4xl mx-auto py-10">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Pending AI Approvals</h1>
+        <div id="approvals-container" class="space-y-4">
+            <!-- Approvals injected here by JS -->
+            <p class="text-gray-500 loading">Loading pending actions...</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:8081/api/admin/approvals";
+        const ADMIN_TOKEN = "local-dev-admin"; // Mock token for unauthenticated MVP
+
+        async function fetchApprovals() {
+            try {
+                const response = await fetch(API_URL, {
+                    headers: { "Authorization": `Bearer ${ADMIN_TOKEN}` }
+                });
+                if (!response.ok) throw new Error("Failed to load");
+                const approvals = await response.json();
+                renderApprovals(approvals);
+            } catch (err) {
+                document.getElementById('approvals-container').innerHTML = 
+                    `<p class="text-red-500">Error loading approvals: ${err.message}</p>`;
+            }
+        }
+
+        function renderApprovals(approvals) {
+            const container = document.getElementById('approvals-container');
+            if (approvals.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 bg-white p-6 rounded shadow border">No pending approvals required.</p>';
+                return;
+            }
+            
+            container.innerHTML = approvals.map(appr => `
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200" id="approval-${appr.id}">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded mb-2">Needs Review</span>
+                            <h2 class="text-xl font-semibold mb-1">Agent: ${appr.agent_id}</h2>
+                            <p class="text-sm text-gray-500 mb-4">Run ID: ${appr.run_id} | Created: ${new Date(appr.created_at).toLocaleString()}</p>
+                            <pre class="bg-gray-50 p-4 rounded text-sm text-gray-700 overflow-x-auto border">${JSON.stringify(appr.payload, null, 2)}</pre>
+                        </div>
+                        <div class="flex flex-col space-y-2 ml-6 w-32 shrink-0 border-l pl-6">
+                            <button onclick="decide('${appr.id}', 'approved')" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-medium transition-colors">Approve</button>
+                            <button onclick="decide('${appr.id}', 'rejected')" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded font-medium transition-colors">Reject</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function decide(approvalId, decision) {
+            try {
+                const response = await fetch(`${API_URL.replace('/approvals', '')}/approvals/${approvalId}/decide`, {
+                    method: 'POST',
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${ADMIN_TOKEN}` 
+                    },
+                    body: JSON.stringify({ decision: decision, reason: `Admin visually ${decision} from dashboard` })
+                });
+                
+                if (response.ok) {
+                    const el = document.getElementById(`approval-${approvalId}`);
+                    el.innerHTML = `<p class="text-gray-500 text-center font-medium my-8">Action ${decision.toUpperCase()} successfully. Agent run resuming...</p>`;
+                    setTimeout(() => el.remove(), 3000);
+                } else {
+                    alert('Error submitting decision.');
+                }
+            } catch (err) {
+                alert('Network error: ' + err.message);
+            }
+        }
+
+        // Init
+        fetchApprovals();
+    </script>
+</body>
+</html>

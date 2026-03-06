@@ -1,0 +1,281 @@
+/* ════════════════════════════════════════════════════════════
+   QRGate — Global Design System CSS
+   Apple-Level Standard · v2.0
+   ════════════════════════════════════════════════════════════ */
+
+/* ── 1. REDUCED MOTION — Global accessibility ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ── 2. TYPOGRAPHY — Global optical improvements ──────────── */
+html {
+    /* Smooth font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Optical font sizing for large headings */
+    font-optical-sizing: auto;
+    /* Base scroll behavior */
+    scroll-behavior: smooth;
+}
+
+/* Tabular numbers on all numeric contexts */
+.tabular-nums,
+[data-numeric],
+.kpi-value,
+.price-value {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+/* Titles: optical letter-spacing */
+h1,
+h2,
+h3 {
+    letter-spacing: -0.02em;
+    font-optical-sizing: auto;
+}
+
+h1 {
+    letter-spacing: -0.03em;
+}
+
+/* Body text: legible line-height */
+p,
+li,
+td,
+th {
+    line-height: 1.6;
+    max-width: 70ch;
+    /* Prevent over-long lines */
+}
+
+/* Max-width prose override where needed */
+.prose-width {
+    max-width: 65ch;
+}
+
+/* ── 3. AUTOFILL STYLING ──────────────────────────────────── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #F8FAFC inset !important;
+    -webkit-text-fill-color: #1E293B !important;
+    caret-color: #1E293B;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Dark mode autofill */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #1E293B inset !important;
+    -webkit-text-fill-color: #F1F5F9 !important;
+}
+
+/* ── 4. SAFE AREA — iPhone notch + home indicator ─────────── */
+.safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-top {
+    padding-top: env(safe-area-inset-top);
+}
+
+.pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+/* ── 5. FOCUS RINGS — Brand-consistent, WCAG 3:1+ ─────────── */
+:focus-visible {
+    outline: 2px solid #2563EB;
+    /* blue-600: ratio 4.7:1 vs white */
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Remove default outline only when focus-visible is supported */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ── 6. SCROLL BEHAVIORS ──────────────────────────────────── */
+/* Momentum scroll on iOS */
+.scroll-touch {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: scroll;
+    touch-action: pan-y;
+}
+
+/* Scroll anchoring — prevents jump on dynamic content */
+.scroll-anchor {
+    overflow-anchor: auto;
+}
+
+/* ── 7. SKELETON SHIMMER ──────────────────────────────────── */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg,
+            #f1f5f9 25%,
+            #e2e8f0 50%,
+            #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+}
+
+/* ── 8. COLORED SHADOWS — Brand elevation system ─────────── */
+.shadow-primary {
+    box-shadow: 0 4px 14px -2px rgba(37, 99, 235, 0.35);
+}
+
+.shadow-gold {
+    box-shadow: 0 4px 14px -2px rgba(218, 165, 32, 0.3);
+}
+
+.shadow-success {
+    box-shadow: 0 4px 14px -2px rgba(21, 128, 61, 0.25);
+}
+
+/* ── 9. VIEW TRANSITIONS — Page-to-page fluidity ─────────── */
+@keyframes qr-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes qr-fade-out {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    ::view-transition-old(root) {
+        animation: qr-fade-out 150ms ease-in both;
+    }
+
+    ::view-transition-new(root) {
+        animation: qr-fade-in 150ms ease-out both;
+    }
+}
+
+/* ── 10. TOUCH TARGETS — Minimum 44×44px ─────────────────── */
+.touch-target {
+    position: relative;
+}
+
+.touch-target::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* ── 11. HIGH CONTRAST MEDIA QUERY ──────────────────────────*/
+@media (prefers-contrast: more) {
+
+    input,
+    select,
+    textarea {
+        border-width: 2px !important;
+        border-color: #1E293B !important;
+    }
+
+    button {
+        border: 2px solid currentColor !important;
+    }
+
+    /* Remove decorative shadows that reduce contrast */
+    * {
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+}
+
+/* ── 12. ICON OPTICAL ALIGNMENT ─────────────────────────────*/
+/* Icons inline with text often appear low — correct optically */
+.icon-inline {
+    display: inline-flex;
+    align-items: center;
+    transform: translateY(-1px);
+}
+
+/* ── 13. GRADIENT TEXT — with fallback ──────────────────────*/
+.text-gradient {
+    background: linear-gradient(135deg, #1B4FD8, #3B82F6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* Fallback */
+    color: #1B4FD8;
+}
+
+/* ── 14. LEGACY — CRA default styles (kept, not removed) ─── */
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #0f0f10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

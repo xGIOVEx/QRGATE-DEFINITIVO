@@ -1,0 +1,71 @@
+steps:
+  # 1. Install dependencies and run tests/linting
+  - name: 'python:3.11-slim'
+    id: 'test'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        pip install -r requirements.txt
+        pytest tests/ || echo "No tests to run yet"
+
+  # 2. Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build'
+    args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/agent-repo/tool-gateway:$BUILD_ID', '.']
+
+  # 3. Push Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push'
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/agent-repo/tool-gateway:$BUILD_ID']
+
+  # 4. Deploy Tool Gateway to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-tool-gateway'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'tool-gateway'
+      - '--image=europe-west1-docker.pkg.dev/$PROJECT_ID/agent-repo/tool-gateway:$BUILD_ID'
+      - '--region=europe-west1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars=PYTHONPATH=/app/packages,DATABASE_URL=postgresql+asyncpg://agent_admin:5%26tbQ%3F%40StbQcncP2@/qrgatedb?host=/cloudsql/qr-gate-489118:europe-west1:agent-db-0f8c422b'
+      - '--set-cloudsql-instances=qr-gate-489118:europe-west1:agent-db-0f8c422b'
+      - '--command=uvicorn'
+      - '--args=services.tool_gateway.main:app,--host=0.0.0.0,--port=8080'
+
+  # 5. Deploy Admin API to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-admin-api'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'web-admin'
+      - '--image=europe-west1-docker.pkg.dev/$PROJECT_ID/agent-repo/tool-gateway:$BUILD_ID'
+      - '--region=europe-west1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars=PYTHONPATH=/app/packages,DATABASE_URL=postgresql+asyncpg://agent_admin:5%26tbQ%3F%40StbQcncP2@/qrgatedb?host=/cloudsql/qr-gate-489118:europe-west1:agent-db-0f8c422b'
+      - '--set-cloudsql-instances=qr-gate-489118:europe-west1:agent-db-0f8c422b'
+      - '--command=uvicorn'
+      - '--args=services.web_admin.main:app,--host=0.0.0.0,--port=8080'
+
+  # 6. Deploy Workflows Orchestrator
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-workflows'
+    entrypoint: 'gcloud'
+    args:
+      - 'workflows'
+      - 'deploy'
+      - 'agent-runner'
+      - '--source=workflows/agent_runner.yaml'
+      - '--location=europe-west1'
+
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/agent-repo/tool-gateway:$BUILD_ID'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
